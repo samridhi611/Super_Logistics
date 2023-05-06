@@ -1,0 +1,19 @@
+/* .table-root .MuiTableCell-head {
+    text-align: left;
+  } */
+  th.MuiTableCell-root.MuiTableCell-head.MuiTableCell-sizeMedium.tss-10syd3x-MUIDataTableHeadCell-root.tss-gm6zfk-MUIDataTableHeadCell-fixedHeader.css-1ygcj2i-MuiTableCell-root {
+    padding-left: 0;
+}
+
+p#\:rb\: {
+    margin-bottom: 2px;
+}
+
+p.MuiTablePagination-displayedRows.css-levciy-MuiTablePagination-displayedRows {
+    margin-bottom: 0;
+}
+
+button.MuiButtonBase-root.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.MuiButton-root.MuiButton-contained.MuiButton-containedPrimary.MuiButton-sizeMedium.MuiButton-containedSizeMedium.css-sghohy-MuiButtonBase-root-MuiButton-root{
+    margin: 1% 0;
+    height: 42px;
+}

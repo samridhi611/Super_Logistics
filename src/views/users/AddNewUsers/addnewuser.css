@@ -1,0 +1,15 @@
+.PhontInput{
+    display: block;
+    width: 100%;
+    padding: 13.3m 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgba(44, 56, 74, 0.95);
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #b1b7c1;
+    appearance: none;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
