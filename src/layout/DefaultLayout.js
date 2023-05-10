@@ -3,7 +3,7 @@ import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/inde
 import getUserRole from '../auth';
 
 const DefaultLayout = () => {
-  const userRole = getUserRole();
+  const userRole = localStorage.getItem('role')
   return (
     <div>
       <AppSidebar userRole={userRole}/>

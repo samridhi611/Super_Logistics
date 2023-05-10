@@ -9,10 +9,20 @@ const Authentication = () => {
    
   const navigate = useNavigate();
 
+  let link;
+
   const handleSubmit = async (e) => {
      e.preventDefault();
 
-     const response = await axios.post('http://4.240.84.193/api/SuperAdmin/VerifyOTP', {
+     const role = localStorage.getItem('role');
+
+     if (role ==  'superAdmin'){
+          link = 'http://4.240.84.193/api/SuperAdmin/VerifyOTP'
+     } else {
+        link = 'http://4.240.84.193/api/Company/VerifyOTP'
+     }
+
+     const response = await axios.post(link , {
        user_id: localStorage.getItem('userId'),
        otp 
     }).catch(error => {

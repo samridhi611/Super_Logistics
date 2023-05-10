@@ -11,19 +11,31 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [validate, setValidate] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
-  const navigate = useNavigate("");  
   
   const authenticate = async (e) => {
+    
+    let link;
+
     e.preventDefault();
 
-    const response = await axios.post('http://4.240.84.193/api/SuperAdmin/PlatformLogin', {
+    const userType = document.querySelector('input[name="userType"]:checked').value;
+
+    if (userType == 'superAdmin'){
+          link = 'http://4.240.84.193/api/SuperAdmin/PlatformLogin'
+    } else {
+      link = 'http://4.240.84.193/api/Company/Login'
+    }
+
+    
+    const response = await axios.post(link, {
       email,
       password,
     }).catch(error => {
       console.error(error)
       alert('Enter Correct Credentials')
      })
+
+     localStorage.setItem('role',userType);
 
      const validate = validateLogin();
 
@@ -42,9 +54,6 @@ const Login = () => {
      if (response.status) {
       window.location.href = '/otp';
     }
-
-
-    
 
   };
 
@@ -96,6 +105,34 @@ const Login = () => {
                 onSubmit={authenticate}
                 // autoComplete={"off"}
               >
+                <div className="d-flex" style={{justifyContent:'space-between'}}>
+                    <div className="form-check mb-3">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="userType"
+                          id="superAdmin"
+                          value="superAdmin"
+                          required
+                        />
+                        <label className="form-check-label" htmlFor="superAdmin">
+                          Super Admin
+                        </label>
+                      </div>
+                      <div className="form-check mb-3">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="userType"
+                          id="companyAdmin"
+                          value="companyAdmin"
+                          required
+                        />
+                        <label className="form-check-label" htmlFor="companyAdmin">
+                          Company Admin
+                        </label>
+                      </div>
+                      </div>
                 <div className="email mb-3">
                   <input
                     type="email"

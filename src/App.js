@@ -28,7 +28,7 @@ class App extends Component {
           <Routes>
             <Route exact path="/" name="Login Page" element={<Login />} />
             <Route exact path="/register" name="Register Page" element={<Register />} />
-            <Route exact path="/create-pass" name="Create Pass Page" element={<CreatePass/>} />
+            <Route exact path="/create-pass/*" name="Create Pass Page" element={<CreatePass/>} />
             <Route exact path="/404" name="Page 404" element={<Page404 />} />
             <Route exact path="/500" name="Page 500" element={<Page500 />} />
             <Route exact path="/forgot-password" name="Forgot Password" element={<Forgot/>}/>

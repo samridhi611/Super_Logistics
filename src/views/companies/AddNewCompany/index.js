@@ -2,29 +2,22 @@ import { useDispatch } from 'react-redux';
 import React, { useState , useRef} from 'react'
 import { useNavigate } from 'react-router-dom'
 import  data  from '../data.js';
-import {
-    CButton,
-    CCard,
-    CCardBody,
-    CCardHeader,
-    CCol,
-    CForm,
-    CFormInput,
-    CFormLabel,
-    CFormTextarea,
-    CRow,
-  } from '@coreui/react'
+import PhoneInput from 'react-phone-number-input';
+import axios from 'axios';
+import 'react-phone-number-input/style.css'
+import './addnewcompany.css'
+import {  CButton, CCard, CCardBody,CCardHeader,CFormSelect, CCol, CForm, CFormInput, CFormLabel, CRow,} from '@coreui/react'
 
 const AddNewCompanies = () => {
 
-  const [inputData, setInputData] = useState({ companyName: '', gstNumber: '', ownerName: '',primaryContact: '',mail:'',noOfEmp:'' });
-  const dispatch = useDispatch();  
+  const token = localStorage.getItem('token');
+  console.log(token)
+ 
+  const [bContact , setBContact] = useState('');
+  const [pContact , setPContact] = useState('');
+  const [inputData, setInputData] = useState({ companyName: '',businessType:'', gstNumber: '',businessAddress:'',primaryContactName : '',mail:'',noOfEmp:'' });
 
-  const navigate = useNavigate();
-   
   const [validated, setValidated] = useState(false)
-
-  const formRef = useRef(null);
 
    const submitHandler = (e) =>{
          e.preventDefault();
@@ -34,37 +27,49 @@ const AddNewCompanies = () => {
                 e.stopPropagation()
             }
 
-            dispatch({
-                type: 'ADD_USER_DATA',
-                payload: inputData
-              });
-            setInputData({ companyName: '', gstNumber: '', email: '' ,ownerName: '',primaryContact: '',mail:'',noOfEmp:''});
+            const data = {
+              company_name : inputData.companyName,
+              company_type : inputData.businessType,
+              gst_number : inputData.gstNumber,
+              company_contact_number :bContact,
+              number_of_employees : inputData.noOfEmp,
+              contact_number : pContact,
+              contact_name : inputData.primaryContactName,
+              company_address : inputData.businessAddress,
+              email : inputData.mail
+            };
+
+            const headers = {
+              'Authorization': `bearer ${token}`,
+              'Content-Type': 'application/json'
+            };
+
+            axios.post("http://4.240.84.193/api/SuperAdmin/ComapanyRegistration", data, {headers})
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Data posted successfully:", data);
+              // add code to handle successful response
+            })
+            .catch((error) => {
+              console.error("Error posting data:", error);
+              // add code to handle error
+            });
+           
+            
             setValidated(true)
 
             if(validated){
-                const formData = new FormData(e.target);
-                const newObject = [
-                    // add properties to the object based on the form data
-                        formData.get('companyName'),
-                        formData.get('gstNumber'),
-                        formData.get('ownerName'),
-                        formData.get('primaryContact'),
-                        formData.get('inputEmail'),
-                        formData.get('noOfEmp'),
-                    // etc.
-                ]
-                console.log(newObject);
-                data.push(newObject);
-                
-
-                // const fs = require('fs');
-                // fs.writeFileSync('./data.js', `export const data = ${JSON.stringify(data)}`);
-
+  
+                setInputData({ companyName: '',businessType:'', gstNumber: '',businessAddress:'', bContact: '',ownerName: '',primaryContactName : '',mail:'',noOfEmp:'' , ContactNumber :''});
+                setBContact('');
+                setPContact('');
             }
-
-         console.log(data);
-         console.log(inputData.companyName,inputData.gstNumber,inputData.noOfEmp,inputData.primaryContact,inputData.mail)
-         
+        
    }
 
   return (
@@ -80,7 +85,7 @@ const AddNewCompanies = () => {
           <CCardBody>
               <CRow className="mb-3">
                 <CFormLabel htmlFor="companyName" className="col-sm-2 col-form-label">
-                  Company Name
+                  Business Name
                 </CFormLabel>
                 <div className="col-sm-10">
                   <CFormInput
@@ -92,6 +97,33 @@ const AddNewCompanies = () => {
                   />
                 </div>
               </CRow>
+              <CRow className='mb-3'>
+                  <CFormLabel
+                    htmlFor='businessType'
+                    className='col-sm-2 col-form-label'
+                  >
+                    Business Type
+                  </CFormLabel>
+                  <div className='col-sm-10'>
+                    <CFormSelect
+                      id='businessType'
+                      required
+                      value={inputData.businessType}
+                      onChange={(e) =>
+                        setInputData({
+                          ...inputData,
+                          businessType: e.target.value,
+                        })
+                      }
+                    >
+                      <option value=''>Choose...</option>
+                      <option value='Private Limited '>Private Limited </option>
+                      <option value='Sole proprietorship'>Sole proprietorship</option>
+                      <option value='Public Limited '>Public Limited </option>
+                      <option value='LLP'>LLP </option>
+                    </CFormSelect>
+                  </div>
+              </CRow>
               <CRow className="mb-3">
                 <CFormLabel htmlFor="gstNumber" className="col-sm-2 col-form-label">
                   GST Number
@@ -99,27 +131,65 @@ const AddNewCompanies = () => {
                 <div className="col-sm-10">
                   <CFormInput type="text" id="gstNumber" required
                     value={inputData.gstNumber} 
+                    pattern="[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[0-9]{1}[a-zA-Z]{1}[0-9]{1}"
                     onChange={(e) => setInputData({ ...inputData, gstNumber: e.target.value })} />
                 </div>
               </CRow>
               <CRow className="mb-3">
-                <CFormLabel htmlFor="ownerName" className="col-sm-2 col-form-label">
-                  Owner Name
+                <CFormLabel htmlFor="businessAddress" className="col-sm-2 col-form-label">
+                  Business Address
                 </CFormLabel>
                 <div className="col-sm-10">
-                  <CFormInput type="text" id="ownerName" required
-                    value={inputData.ownerName} 
-                    onChange={(e) => setInputData({ ...inputData, ownerName: e.target.value })} />
+                  <CFormInput type="text" id="businessAddress" required
+                    value={inputData.businessAddress} 
+                    onChange={(e) => setInputData({ ...inputData, businessAddress: e.target.value })} />
                 </div>
               </CRow>
               <CRow className="mb-3">
-                <CFormLabel htmlFor="primaryContact" className="col-sm-2 col-form-label">
-                  Primary Contact
+                <CFormLabel htmlFor="bContact" className="col-sm-2 col-form-label">
+                  Business Contact Number
                 </CFormLabel>
                 <div className="col-sm-10">
-                  <CFormInput type="tel" id="primaryContact" required
-                    value={inputData.primaryContact} 
-                    onChange={(e) => setInputData({ ...inputData, primaryContact: e.target.value })}/>
+                <PhoneInput
+                        id="phnNumber"
+                        defaultCountry="IN"
+                        value={bContact} 
+                        onChange={setBContact} 
+                        className='phnClass'
+                        maxLength={11}
+                        inputProps={{
+                          className: 'form-control'
+                        }} 
+                />
+                </div>
+              </CRow>
+              
+              <CRow className="mb-3">
+                <CFormLabel htmlFor="primaryContact" className="col-sm-2 col-form-label">
+                  Primary Contact Name
+                </CFormLabel>
+                <div className="col-sm-10">
+                  <CFormInput type="text" id="primaryContactName" required
+                    value={inputData.primaryContactName} 
+                    onChange={(e) => setInputData({ ...inputData, primaryContactName: e.target.value })}/>
+                </div>
+              </CRow>
+              <CRow className="mb-3">
+                <CFormLabel htmlFor="ContactNumber" className="col-sm-2 col-form-label">
+                   Contact Number
+                </CFormLabel>
+                <div className="col-sm-10">
+                <PhoneInput
+                        id="phnNumber"
+                        defaultCountry="IN"
+                        value={pContact} 
+                        onChange={setPContact} 
+                        className='phnClass'
+                        maxLength={11}
+                        inputProps={{
+                          className: 'form-control'
+                        }} 
+                />
                 </div>
               </CRow>
               <CRow className="mb-3">
@@ -131,7 +201,8 @@ const AddNewCompanies = () => {
                     value={inputData.mail} 
                     onChange={(e) => setInputData({ ...inputData, mail: e.target.value })} />
                 </div>
-              </CRow><CRow className="mb-3">
+              </CRow>
+              <CRow className="mb-3">
                 <CFormLabel htmlFor="noOfEmp" className="col-sm-2 col-form-label">
                   No. of Employees
                 </CFormLabel>

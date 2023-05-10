@@ -6,8 +6,10 @@ import data from '../data';
 import './allcompanies.css';
 import { Button } from '@mui/material';
 import axios from 'axios';
+import CIcon from '@coreui/icons-react';
 
-const columns = ["Company Name", "GST Number", "Owner Name", "Primary Contact", "Email"];
+import { cilTrash } from '@coreui/icons'
+
 const token = localStorage.getItem('token');
 console.log(token)
 
@@ -33,11 +35,10 @@ const AllCompanies = () => {
       .then(response=>{
         const datas = response;
         const filteredData = datas.data.map(item => ({
-          cname: item.company_name,
-          gstNumber: item.gst_number,
-          name : item.contact_name,
-          contact : item.contact_number,
-          email : item.email,
+          "Company Name": item.company_name,
+          "Contact Name": item.contact_name,
+          "Contact Number": item.contact_number,
+          "Email": item.email,
         }));
         console.log(filteredData);
         setCompanies(filteredData);
@@ -51,6 +52,53 @@ const AllCompanies = () => {
   const handleNavigateToAddCompany = () => {
     navigate('/companies/add-new-companies');
  }
+
+ const columns = [
+  {
+    name: "Company Name",
+    label: "Company Name",
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: "Contact Name",
+    label: "Contact Name",
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: "Contact Number",
+    label: "Contact Number",
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name:"Email" ,
+    label: "Email",
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: "Actions",
+    options: {
+      customBodyRender: (value, tableMeta, updateValue) => {
+        return (
+          <button onClick={() => alert(`Clicked row ${tableMeta.rowIndex}`)} className='delete-btn'>
+            <CIcon icon={cilTrash} customClassName="delete-icon" />
+          </button>
+        );
+      }
+    }
+  },
+];
 
   return (
     <>

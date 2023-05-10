@@ -1,12 +1,13 @@
 import React,{useState,useEffect} from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import MUIDataTable from "mui-datatables";
 import { Button } from '@mui/material';
+import CIcon from '@coreui/icons-react';
 import '../../companies/AllCompanies/allcompanies.css';
-import data from '../data';
-import axios from 'axios';
 
-const columns = ["Name", "Phone Number", "Email Id"];
+import { cilTrash } from '@coreui/icons'
+
 
 const token = localStorage.getItem('token');
 console.log(token)
@@ -17,7 +18,7 @@ const options = {
    
   };
 
-const AllAdmins = () => {
+const AllUsers = () => {
 
 //   const adminData = useSelector(state => state.adminData.adminData);
   const navigate = useNavigate();
@@ -34,9 +35,9 @@ const AllAdmins = () => {
     .then(response=>{
       const datas = response;
       const filteredData = datas.data.map(item => ({
-        name: item.name,
-        contact : item.contact,
-        email : item.email,
+        'Name': item.name,
+        'Phone Number' : item.contact,
+        'Email Id': item.email,
       }));
       console.log(filteredData);
       setUsers(filteredData);
@@ -46,6 +47,45 @@ const AllAdmins = () => {
       alert(error)
    })
 },[token])
+
+const columns = [
+  {
+    name: 'Name',
+    label: 'Name',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: 'Phone Number',
+    label: 'Phone Number',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: 'Email Id',
+    label: 'Email Id',
+    options: {
+      filter: true,
+      sort: true,
+    },
+  },
+  {
+    name: "Actions",
+    options: {
+      customBodyRender: (value, tableMeta, updateValue) => {
+        return (
+          <button onClick={() => alert(`Clicked row ${tableMeta.rowIndex}`)} className='delete-btn'>
+            <CIcon icon={cilTrash} customClassName="delete-icon" />
+          </button>
+        );
+      }
+    }
+  },
+];
 
   return (
     <>
@@ -64,7 +104,7 @@ const AllAdmins = () => {
   )
 }
 
-export default AllAdmins
+export default AllUsers
 
 
 

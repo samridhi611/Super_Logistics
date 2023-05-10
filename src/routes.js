@@ -1,5 +1,4 @@
 import React from 'react'
-import getUserRole from './auth';
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const CompanyAdminDashboard = React.lazy(() => import('./views/dashboard/CompanyAdminDashboard'))
@@ -18,10 +17,11 @@ const Typography = React.lazy(() => import('./views/theme/typography/Typography'
 //   }
 // } 
 
-const getDashboardComponent = () => {
-  const userRole = getUserRole();
 
-  if (userRole === 'admin') {
+const getDashboardComponent = () => {
+  const userRole = localStorage.getItem('role');
+
+  if (userRole === 'companyAdmin') {
     return CompanyAdminDashboard;
   }
   return Dashboard;

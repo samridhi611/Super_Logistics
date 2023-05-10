@@ -19,7 +19,7 @@ const AppSidebar = ({userRole}) => {
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.nav.sidebarShow)
 
-  const navigation = userRole === 'admin' ? cnav : nav;
+  const navigation = userRole === 'companyAdmin' ? cnav : nav;
 
   return (
     <CSidebar
@@ -47,7 +47,7 @@ const AppSidebar = ({userRole}) => {
 }
 
 AppSidebar.propTypes = {
-  userRole: PropTypes.oneOf(['admin', 'superadmin']).isRequired,
+  userRole: PropTypes.oneOf(['companyAdmin', 'superAdmin']).isRequired,
 };
 
 export default React.memo(AppSidebar)

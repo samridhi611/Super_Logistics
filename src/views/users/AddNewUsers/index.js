@@ -1,16 +1,18 @@
-import { useDispatch } from 'react-redux';
 import React, { useState , useRef} from 'react'
-import { useNavigate } from 'react-router-dom'
 import PhoneInput from 'react-phone-number-input';
+import axios from 'axios';
 import 'react-phone-number-input/style.css'
+import './addnewuser.css'
 import { CButton, CCard, CCardBody, CCardHeader, CCol, CFormSelect ,CForm, CFormInput, CFormLabel,CRow,} from '@coreui/react'
 
 const AddNewUsers = () => {
 
+  const token = localStorage.getItem('token');
+  console.log(token)
+
 
   const [value, setValue] = useState()
   const [inputData, setInputData] = useState({ name: '', phnNumber: '',email:'',role:''});
-  const dispatch = useDispatch();  
   const [validated, setValidated] = useState(false)
 
    const submitHandler = (e) =>{
@@ -21,18 +23,43 @@ const AddNewUsers = () => {
                 e.stopPropagation()
             }
 
-            dispatch({
-                type: 'ADD_USER_DATA',
-                payload: inputData
-              });
-            setInputData({ name: '', phnNumber: '',email:'',role:''});
-            setValidated(true)
+            
+
+            const data = {
+              name: inputData.name,
+              email: inputData.email,
+              role_id: inputData.role,
+              contact: value,
+            };
+
+            const headers = {
+              'Authorization': `bearer ${token}`,
+              'Content-Type': 'application/json'
+            };
+
+            axios.post("http://4.240.84.193/api/SuperAdmin/PlatformUserRegistration", data, {headers})
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Data posted successfully:", data);
+              // add code to handle successful response
+            })
+            .catch((error) => {
+              console.error("Error posting data:", error);
+              // add code to handle error
+            });
+
+            
+            setValidated(true);
 
             if(validated){
-                const formData = new FormData(e.target);
+                  setInputData({ name: '', phnNumber: '',email:'',role:''}); 
+                  setValue('');
             }
-
-         console.log(inputData.name,inputData.phnNumber,inputData.email)
          
    }
 
@@ -66,10 +93,26 @@ const AddNewUsers = () => {
                   Contact Number
                 </CFormLabel>
                 <div className="col-sm-10">
-                  <PhoneInput id="phnNumber" required
-                    defaultCountry="IN"
-                    value={value} 
-                    onChange={setValue} />
+                <PhoneInput
+                        id="phnNumber"
+                        defaultCountry="IN"
+                        value={value} 
+                        onChange={setValue} 
+                        className='phnClass'
+                        maxLength={10}
+                        inputProps={{
+                          className: 'form-control'
+                        }}
+                 />
+
+                {/* <CFormInput
+                    type="tel"
+                    id="contact"
+                    required
+                    value={inputData.phnNumber} 
+                    onChange={(e) => setInputData({ ...inputData, phnNumber: e.target.value })}
+                  /> */}
+
                 </div>
               </CRow>
               <CRow className="mb-3">
