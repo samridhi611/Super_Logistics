@@ -1,15 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Half from '../UI/Half';
+import axios from 'axios';
+
+
 
 const CreatePass = () => {
-    
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  let password;
-  //authenticating
+
   const formSchema = Yup.object().shape({
     password: Yup.string()
       .required("Password is required")
@@ -28,20 +27,53 @@ const CreatePass = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     watch,
     getValues
   } = useForm({
     mode: "onTouched",
     resolver: yupResolver(formSchema)
   });
-  password = watch("password", "");
 
-  const onSubmit = (e) => {
-    reset();
-    console.log(e);
+  const onSubmit = async () => {
+    
+    let link;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const role = urlParams.get('role');
+    console.log(token, role);
+    localStorage.setItem('role',role)
+    localStorage.setItem('pass_token',token)
+      
+    if(role === 'company_user'){
+        link = 'http://4.240.84.193/api/Company/CreatePassword'
+    } else if (role === 'platform_user'){
+       link = 'http://4.240.84.193/api/SuperAdmin/CreatePassword'
+    }
+
+    const {password , cpassword} = getValues();
+    
+    const response = await axios.post(link, {
+      password : password,
+      confirm_Password : cpassword,
+    }).catch(error => {
+      console.error(error)
+      alert('Check Your Password')
+     })
+   
+     if (response.status) {
+      alert("Password Created");
+    }
+
   };
 
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  let password;
+
+  //authenticating
+  password = watch("password", "");
 
   //show password or not
   const togglePassword = (e) => {
